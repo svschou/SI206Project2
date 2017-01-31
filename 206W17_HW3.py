@@ -3,7 +3,7 @@ import re
 
 ## SI 206 - W17 - HW3
 ## COMMENT WITH:
-## Your section day/time:
+## Your section day/time: Friday 9 am - 10 am
 ## Any names of people you worked with on this assignment:
 
 #####################
@@ -19,7 +19,19 @@ import re
 # parse_counted_words('101 dalmations!') should return ('101', 'dalmations') ...
 
 ## Write code to define your parse_counted_words function here.
+def parse_counted_words(x):
+    try:
+        list_of_strings = re.findall('[0-9]+ \S*\w*[A-z]', x) # list
+        # print(list_of_strings)
 
+        last_string = list_of_strings[-1] # string
+        last_string = last_string.split()
+
+        tup = (last_string[0], last_string[1])
+        return tup
+        
+    except:
+        return None
 
 
 
