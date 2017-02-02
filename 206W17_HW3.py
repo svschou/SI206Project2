@@ -21,14 +21,13 @@ import re
 ## Write code to define your parse_counted_words function here.
 def parse_counted_words(x):
     try:
-        list_of_strings = re.findall('[0-9]+ \S*\w*[A-z]', x) # list
+        list_of_strings = re.findall('[0-9]+ \S*\w*[A-z]', x)
         # print(list_of_strings)
 
-        last_string = list_of_strings[-1] # string
-        last_string = last_string.split()
+        last_string = list_of_strings[-1] # takes the last string
+        last_string = last_string.split() # split the string into the count and the word
 
-        tup = (last_string[0], last_string[1])
-        return tup
+        return (last_string[0], last_string[1]) # returns a tuple, the count followed by the word
 
     except:
         return None
@@ -39,32 +38,32 @@ def parse_counted_words(x):
 
 ## We have provided a text file computer_paths.txt. It's not incredibly long -- you can scan through it, but do NOT hard code your answers! Each line contains 1 filesystem path.
 computer_paths = open('computer_paths.txt', 'r')
-path_lines = computer_paths.readlines()
+path_lines = computer_paths.readlines() # converts lines into strings for iteration
 # for line in path_lines:
 #     print(line)
-    
+
 ## (a) Write Python code to determine how many of these paths identify FILES, not directories. Save that number in the variable file_paths_num.
 file_paths_num = 0
 for line in path_lines:
-    file_strings = re.findall('\S*[^\.]\.\S', line)
+    file_strings = re.findall('\S*[^\.]\.\S', line) # finds lines with '.' that identify files
     file_paths_num += len(file_strings)
 
 ## (b) Write Python code to determine how many of these paths are FULL paths, not relative paths. Save that number in the variable full_paths_num.
 full_paths_num = 0
 for line in path_lines:
-    full_strings = re.findall('^/Users|~', line)
+    full_strings = re.findall('^/|~', line) # fined lines that begin with either a '/' or '~' that represent full paths
     full_paths_num += len(full_strings)
 
 ## (c) Write Python code to determine how many of these paths describe a Python file saved inside a folder called SI206. Save that number in the variable python_course_paths.
 python_course_paths = 0
 for line in path_lines:
-    course_strings = re.findall('SI206\S*\.py', line)
+    course_strings = re.findall('SI206\S*\.py', line) # finds lines that have both 'SI206' and '.py'
     python_course_paths += len(course_strings)
 
 ## (d) Write Python code to determine how many of these paths describe a Microsoft file (a file that EITHER ends with .docx OR .xlsx, but nothing else counts) where the file name ends in a digit. Save that total in the variable microsoft_files_num.
 microsoft_files_num = 0
 for line in path_lines:
-    microsoft_strings = re.findall('[0-9]\.docx|[0-9]\.xlsx', line)
+    microsoft_strings = re.findall('[0-9]\.docx|[0-9]\.xlsx', line) # finds lines that have numbers followed by either a '.docx' or a '.xlsx'
     microsoft_files_num += len(microsoft_strings)
 
 computer_paths.close()
