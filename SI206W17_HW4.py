@@ -13,10 +13,12 @@ from bs4 import BeautifulSoup
 ## PART 1 (100 points) - Get the HTML data from http://www.nytimes.com (the New York Times home page) and save it in a file called nytimes_data.html.
 
 ## Write the Python code to do so here.
+# try to access the cached data
 try: 
 	cache_file = open("nytimes_data.html", "r")
 	html_text = cache_file.read()
 	cache_file.close()
+# if there is not a cached data, go get the data!
 except:
 	html_text = requests.get("http://www.nytimes.com").text
 	cache_file = open("nytimes_data.html", "w")
@@ -53,14 +55,10 @@ except:
 # creates an empty string to add each line to
 html_string = "" 
 
-# html_open = open("nytimes_data.html", "r") # opens the html file for reading
-# lines = html_open.readlines() # splits the html file into a list of text strings
-# for line in lines:
-# 	html_string = html_string + line # adds each line to the long accumulating string
-# # print(type(html_string))
-# html_file.close()
-
 # creates a BeautifulSoup object
+cache_file = open("nytimes_data.html", "r")
+html_text = cache_file.read()
+
 nytimes_soup = BeautifulSoup(html_text, 'html.parser') 
 
 nytimes_headlines = []
@@ -71,8 +69,7 @@ for heading in nytimes_soup.find_all(class_="story-heading", limit=10):
 		# adds the text of that tag to the list nytimes_headlines
 		nytimes_headlines.append(heading.a.text) 
 
-print(nytimes_headlines)
-
+cache_file.close()
 
 #####################
 
@@ -104,22 +101,34 @@ umsi_titles = {}
 ## Find the container that holds the name that belongs to that person (HINT: look for something unique, like a property element...)
 ## Find the container that holds the title that belongs to that person (HINT: a class name)
 ## Grab the text of each of those elements and put them in the dictionary umsi_titles properly
+si_names = []
+si_titles = []
+
 for person in people:
-	tag = person.find_all(property="dc:title")
-	for name in tag:
+	# find all tags that include unique "dc:title", which should be one for each person in the directory 
+	name_tags = person.find_all(property="dc:title")
+
+	# for each person in that list of tags that include the unique "dc:title"
+	for name in name_tags:
+		# if that tag includes a <h2>
 		if name.h2:
-			print(name.h2.text)
+			# append the text within the <h2> tag
+			si_names.append(name.h2.text)
 
-	# tag = person.find_all(property="dc:title")
-	# for name in tag:
-	# 	print(name)
-	# name = people[person].find_all(property_="dc:title").text
-	# print(name)
+	# find all <div> tags with the class "field-item even"
+	title_tags = person.find_all("div", {"class":"field-item even"})
+	# each tag will have a jpg file, a name, contact details and a title
+	# grab the title, which should be the last item in the list returned by the line 119
+	si_titles.append(title_tags[-1].text)
+	
+# print(si_names)
+# print(si_titles)
 
+for person in range(len(si_names)):
+	umsi_titles[si_names[person]] = si_titles[person]
 
-
-
-
+for key in umsi_titles:
+	print(key, ":", umsi_titles[key])
 
 
 
