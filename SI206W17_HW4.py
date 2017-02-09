@@ -45,6 +45,14 @@ html_file.close()
 ## HINT: Remember that you'll need to open the file you created in Part 1, read the contets into one big string, and make a BeautifulSoup object out of that string!
 ## NOTE that the provided link does not include saving the online data in a file as part of the process. But it still provides very useful hints/tricks about how to look for and identify the headlines on the NY Times page.
 
+html_string = "" # creates an empty string to add each line to
+
+html_open = open("nytimes_data.html", "r") # opens the html file for reading
+lines = html_open.readlines() # splits the html file into a list of text strings
+for line in lines:
+	html_string = html_string + line # adds each line to the long accumulating string
+# print(type(html_string))
+html_file.close()
 
 
 
