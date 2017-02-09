@@ -13,10 +13,15 @@ from bs4 import BeautifulSoup
 ## PART 1 (100 points) - Get the HTML data from http://www.nytimes.com (the New York Times home page) and save it in a file called nytimes_data.html.
 
 ## Write the Python code to do so here.
-html_text = requests.get("http://www.nytimes.com").text
-html_file = open("nytimes_data.html", "w")
-html_file.write(html_text)
-html_file.close()
+try: 
+	cache_file = open("nytimes_data.html", "r")
+	html_text = cache_file.read()
+	cache_file.close()
+except:
+	html_text = requests.get("http://www.nytimes.com").text
+	cache_file = open("nytimes_data.html", "w")
+	cache_file.write(html_text)
+	cache_file.close()
 
 
 
@@ -45,15 +50,28 @@ html_file.close()
 ## HINT: Remember that you'll need to open the file you created in Part 1, read the contets into one big string, and make a BeautifulSoup object out of that string!
 ## NOTE that the provided link does not include saving the online data in a file as part of the process. But it still provides very useful hints/tricks about how to look for and identify the headlines on the NY Times page.
 
-html_string = "" # creates an empty string to add each line to
+# creates an empty string to add each line to
+html_string = "" 
 
-html_open = open("nytimes_data.html", "r") # opens the html file for reading
-lines = html_open.readlines() # splits the html file into a list of text strings
-for line in lines:
-	html_string = html_string + line # adds each line to the long accumulating string
-# print(type(html_string))
-html_file.close()
+# html_open = open("nytimes_data.html", "r") # opens the html file for reading
+# lines = html_open.readlines() # splits the html file into a list of text strings
+# for line in lines:
+# 	html_string = html_string + line # adds each line to the long accumulating string
+# # print(type(html_string))
+# html_file.close()
 
+# creates a BeautifulSoup object
+nytimes_soup = BeautifulSoup(html_text, 'html.parser') 
+
+nytimes_headlines = []
+# loops through all tags that include "story-heading"
+for heading in nytimes_soup.find_all(class_="story-heading", limit=10): 
+	# if the tag includes a link
+	if heading.a: 
+		# adds the text of that tag to the list nytimes_headlines
+		nytimes_headlines.append(heading.a.text) 
+
+print(nytimes_headlines)
 
 
 #####################
@@ -86,6 +104,17 @@ umsi_titles = {}
 ## Find the container that holds the name that belongs to that person (HINT: look for something unique, like a property element...)
 ## Find the container that holds the title that belongs to that person (HINT: a class name)
 ## Grab the text of each of those elements and put them in the dictionary umsi_titles properly
+for person in people:
+	tag = person.find_all(property="dc:title")
+	for name in tag:
+		if name.h2:
+			print(name.h2.text)
+
+	# tag = person.find_all(property="dc:title")
+	# for name in tag:
+	# 	print(name)
+	# name = people[person].find_all(property_="dc:title").text
+	# print(name)
 
 
 
