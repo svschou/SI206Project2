@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 ## PART 1 (100 points) - Get the HTML data from http://www.nytimes.com (the New York Times home page) and save it in a file called nytimes_data.html.
 
 ## Write the Python code to do so here.
+
 # try to access the cached data
 try: 
 	cache_file = open("nytimes_data.html", "r")
@@ -51,14 +52,14 @@ except:
 ## Write your code to complete this task here.
 ## HINT: Remember that you'll need to open the file you created in Part 1, read the contets into one big string, and make a BeautifulSoup object out of that string!
 ## NOTE that the provided link does not include saving the online data in a file as part of the process. But it still provides very useful hints/tricks about how to look for and identify the headlines on the NY Times page.
+ 
 
-# creates an empty string to add each line to
-html_string = "" 
-
-# creates a BeautifulSoup object
+# opens the file, reads in html as a string, and closes the file
 cache_file = open("nytimes_data.html", "r")
 html_text = cache_file.read()
+cache_file.close()
 
+# creates a Beautiful Soup object
 nytimes_soup = BeautifulSoup(html_text, 'html.parser') 
 
 nytimes_headlines = []
@@ -69,7 +70,6 @@ for heading in nytimes_soup.find_all(class_="story-heading", limit=10):
 		# adds the text of that tag to the list nytimes_headlines
 		nytimes_headlines.append(heading.a.text) 
 
-cache_file.close()
 
 #####################
 
@@ -101,6 +101,7 @@ umsi_titles = {}
 ## Find the container that holds the name that belongs to that person (HINT: look for something unique, like a property element...)
 ## Find the container that holds the title that belongs to that person (HINT: a class name)
 ## Grab the text of each of those elements and put them in the dictionary umsi_titles properly
+
 si_names = []
 si_titles = []
 
@@ -116,17 +117,21 @@ for person in people:
 			si_names.append(name.h2.text)
 
 	# find all <div> tags with the class "field-item even"
-	title_tags = person.find_all("div", {"class":"field-item even"})
-	# each tag will have a jpg file, a name, contact details and a title
-	# grab the title, which should be the last item in the list returned by the line 119
-	si_titles.append(title_tags[-1].text)
+	title_tags = person.find_all("div", {"class":"field field-name-field-person-titles field-type-text field-label-hidden"})
+	# for each title in the list of tags that include the unique tag for titles
+	for title in title_tags:
+		#add that title to the list of titles
+		si_titles.append(title.text)
 	
 # print(si_names)
 # print(si_titles)
 
+# loop through the the lists
 for person in range(len(si_names)):
+	# add a dictionary key as the name and their title as the value
 	umsi_titles[si_names[person]] = si_titles[person]
 
+# print is for people aka me
 for key in umsi_titles:
 	print(key, ":", umsi_titles[key])
 
