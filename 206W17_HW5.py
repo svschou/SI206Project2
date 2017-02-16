@@ -52,7 +52,15 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser()) # Set up library to g
 ## 3. Invoke your function, save the return value in a variable, and explore the data you got back!
 ## 4. With what you learn from the data -- e.g. how exactly to find the text of each tweet in the big nested structure -- write code to print out content from 3 tweets, as shown above.
 
-
+CACHE_FILE = "HW5_twitter_data.json"
+try:
+	cache_file_obj = open(CACHE_FILE, "r")
+	# reads in data as one long string
+	cache_contents = cache_file_obj.read() 
+	# load data string into JSON dictionary
+	CACHE_DICTION = json.loads(cache_contents)
+except:
+	CACHE_DICTION = {}
 
 
 
