@@ -2,6 +2,7 @@ import unittest
 import tweepy
 import requests
 import json
+import twitter_info
 
 ## SI 206 - W17 - HW5
 ## COMMENT WITH:
@@ -35,10 +36,10 @@ import json
 ## **** If you choose not to do that, we strongly advise using authentication information for an 'extra' Twitter account you make just for this class, and not your personal account, because it's not ideal to share your authentication information for a real account that you use frequently.
 
 ## Get your secret values to authenticate to Twitter. You may replace each of these with variables rather than filling in the empty strings if you choose to do the secure way for 50 EC points
-consumer_key = "" 
-consumer_secret = ""
-access_token = ""
-access_token_secret = ""
+consumer_key = twitter_info.consumer_key
+consumer_secret = twitter_info.consumer_secret
+access_token = twitter_info.access_token
+access_token_secret = twitter_info.access_token_secret
 ## Set up your authentication to Twitter
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
@@ -63,7 +64,31 @@ except:
 	CACHE_DICTION = {}
 
 
+def get_twitter_data(user_input):
+	if user_input in CACHE_DICTION:
+		print("Using cached data for:	" + user_input + "\n")
+		# print(CACHE_DICTION[user_input]["statuses"][0])
+		twitter_results = CACHE_DICTION[user_input]
+	else:
+		print("Getting new data for:	" + user_input + "\n")
+		# if no saved data, search twitter for the user_input string with a limit of 10 tweets
+		twitter_results = api.search(q=user_input,rpp=3) # type dictionary
+		# add info to cache
+		CACHE_DICTION[user_input] = twitter_results
+		file_obj = open(CACHE_FILE, "w")
+		file_obj.write(json.dumps(CACHE_DICTION))
+		file_obj.close()
 
+	for tweet in twitter_results["statuses"][:3]:
+		print("TEXT: " + tweet["text"])
+		print("CREATED AT: " + tweet["created_at"])
+		print("\n")
 
+	# return twitter_results["statuses"]
+
+# twitter_results["statuses"][0]["text"]
+
+input_data = input("Search Twitter for: ")
+get_twitter_data(input_data)
 
 
