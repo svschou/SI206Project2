@@ -67,30 +67,28 @@ except:
 
 
 def get_twitter_data(user_input):
+	# if there has already been a search for this word, use the cached data
 	if user_input in CACHE_DICTION:
 		print("Using cached data for:	" + user_input + "\n")
 		# print(CACHE_DICTION[user_input]["statuses"][0])
 		twitter_results = CACHE_DICTION[user_input]
+	# if no saved data, search twitter for the user_input string
 	else:
 		print("Getting new data for:	" + user_input + "\n")
-		# if no saved data, search twitter for the user_input string with a limit of 10 tweets
-		twitter_results = api.search(q=user_input,rpp=3) # type dictionary
+		twitter_results = api.search(q=user_input,rpp=3) 
 		# add info to cache
 		CACHE_DICTION[user_input] = twitter_results
 		file_obj = open(CACHE_FILE, "w")
 		file_obj.write(json.dumps(CACHE_DICTION))
 		file_obj.close()
 
-	for tweet in twitter_results["statuses"][:3]:
+	return twitter_results
+
+
+search_results = get_twitter_data(input("Search Twitter for: "))
+
+# print out the text and created time for the first 3 tweets returned
+for tweet in search_results["statuses"][:3]:
 		print("TEXT: " + tweet["text"])
 		print("CREATED AT: " + tweet["created_at"])
 		print("\n")
-
-	# return twitter_results["statuses"]
-
-# twitter_results["statuses"][0]["text"]
-
-input_data = input("Search Twitter for: ")
-get_twitter_data(input_data)
-
-
