@@ -16,6 +16,7 @@ import requests
 import tweepy
 import twitter_info # Requires you to have a twitter_info file in this directory
 from bs4 import BeautifulSoup
+import re
 
 ## Tweepy authentication setup
 ## Fill these in in the twitter_info.py file
@@ -32,7 +33,16 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 ## Part 0 -- CACHING SETUP
 
 ## Write the code to begin your caching pattern setup here.
+CACHE_FILE = "206project2_caching.json"
 
+try:
+	cache_file_obj = open(CACHE_FILE, "r")
+	# reads in data as one long string
+	cache_contents = cache_file_obj.read() 
+	# load data string into JSON dictionary
+	CACHE_DICTION = json.loads(cache_contents)
+except:
+	CACHE_DICTION = {}
 
 
 
@@ -45,7 +55,11 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 ## find_urls("I love looking at websites like http://etsy.com and http://instagram.com and stuff") should return ["http://etsy.com","http://instagram.com"]
 ## find_urls("the internet is awesome #worldwideweb") should return [], empty list
 
-
+def find_urls(input_string):
+	url_list = re.findall('http://\S+\.\S+|https://\S+\.\S+', input_string)
+	# for link in url_list:
+	# 	print(link)
+	return url_list
 
 
 
