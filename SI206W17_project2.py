@@ -75,15 +75,43 @@ def find_urls(input_string):
 ## Start with this page: https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All  
 ## End with this page: https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=11 
 
+def get_umsi_data():
+	html_strings = []
+	url_string = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastna me_value=&rid=All"
+	page_num = ["", "&page=1", "&page=2", "&page=3", "&page=4", "&page=5", "&page=6", "&page=7", "&page=8", "&page=9", "&page=10", "&page=11"]
 
+	if "umsi_directory_data" in CACHE_DICTION:
+		print("Using cache data: ")
 
+		for page in CACHE_DICTION["umsi_directory_data"]:
+			html_strings.append(page)
+	else:
+		print("Getting new data: ")
 
+		html_page_list = []
 
+		for num in page_num:
+			print(num)
+			response = requests.get(url_string+num, headers={'User-Agent': 'SI_CLASS'})
+			html_doc = response.text
+			html_page_list.append(html_doc)
+
+		CACHE_DICTION["umsi_directory_data"] = html_page_list
+
+		file_obj = open("206project2_caching.json", "w")
+		file_obj.write(json.dumps(CACHE_DICTION))
+		file_obj.close()
+
+		for page in CACHE_DICTION["umsi_directory_data"]:
+			html_strings.append(page)
+
+	return html_strings
+
+get_umsi_data()
 
 
 ## PART 2 (b) - Create a dictionary saved in a variable umsi_titles 
 ## whose keys are UMSI people's names, and whose associated values are those people's titles, e.g. "PhD student" or "Associate Professor of Information"...
-
 
 
 
