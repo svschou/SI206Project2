@@ -107,12 +107,38 @@ def get_umsi_data():
 
 	return html_strings
 
-get_umsi_data()
-
-
 ## PART 2 (b) - Create a dictionary saved in a variable umsi_titles 
 ## whose keys are UMSI people's names, and whose associated values are those people's titles, e.g. "PhD student" or "Associate Professor of Information"...
 
+umsi_titles = {}
+
+for page in CACHE_DICTION["umsi_directory_data"]:
+	# create a BeautifulSoup object for each page in CACHE_DICTION
+	soup = BeautifulSoup(page,"html.parser")
+	people = soup.find_all("div",{"class":"views-row"})
+
+	si_names = []
+	si_titles = []
+
+	for person in people:
+		name_tags = person.find_all(property="dc:title")
+
+		# for each person in that list of tags that include the unique "dc:title"
+		for name in name_tags:
+			# if that tag includes a <h2>
+			if name.h2:
+				# append the text within the <h2> tag
+				si_names.append(name.h2.text)
+
+		title_tags = person.find_all("div", {"class":"field field-name-field-person-titles field-type-text field-label-hidden"})
+		# for each title in the list of tags that include the unique tag for titles
+		for title in title_tags:
+			#add that title to the list of titles
+			si_titles.append(title.text)
+
+	for person in range(len(si_names)):
+		# add a dictionary key as the name and their title as the value
+		umsi_titles[si_names[person]] = si_titles[person]
 
 
 
