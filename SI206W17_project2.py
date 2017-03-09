@@ -41,6 +41,7 @@ try:
 	cache_contents = cache_file_obj.read() 
 	# load data string into JSON dictionary
 	CACHE_DICTION = json.loads(cache_contents)
+	cache_file_obj.close()
 except:
 	CACHE_DICTION = {}
 
@@ -149,17 +150,44 @@ for page in CACHE_DICTION["umsi_directory_data"]:
 ## Behavior: See instructions. Should search for the input string on twitter and get results. Should check for cached data, use it if possible, and if not, cache the data retrieved.
 ## RETURN VALUE: A list of strings: A list of just the text of 5 different tweets that result from the search.
 
+def get_five_tweets(user_string):
 
+	user_key = "twitter_" + user_string
+	tweet_strings = []
+
+	if user_key in CACHE_DICTION:
+		print("Using cached data for:	" + user_string + "\n")
+		twitter_results = CACHE_DICTION[user_key]
+
+	else:
+		print("Getting new data for:	" + user_string + "\n")
+		twitter_results = api.search(q=user_string,rpp=5)
+
+		CACHE_DICTION[user_key] = twitter_results
+		file_obj = open(CACHE_FILE, "w")
+		file_obj.write(json.dumps(CACHE_DICTION))
+		file_obj.close()
+
+	for tweet in twitter_results["statuses"][:5]:
+		tweet_strings.append(tweet["text"])
+
+	return tweet_strings
 
 
 ## PART 3 (b) - Write one line of code to invoke the get_five_tweets function with the phrase "University of Michigan" and save the result in a variable five_tweets.
 
-
+five_tweets = get_five_tweets("University of Michigan")
 
 
 ## PART 3 (c) - Iterate over the five_tweets list, invoke the find_urls function that you defined in Part 1 on each element of the list, and accumulate a new list of each of the total URLs in all five of those tweets in a variable called tweet_urls_found. 
 
+tweet_urls_found = []
 
+for tweet in five_tweets:
+	print(tweet)
+	tweet_url = find_urls(tweet)
+	print(tweet_url)
+	tweet_urls_found.append(tweet_url)
 
 
 
